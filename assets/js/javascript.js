@@ -60,11 +60,12 @@ class Categories
 /**************************************** ShowGifs Class *****************************************/
 class ShowGifs
 {
-    constructor(div)
+    constructor(div, favoritesCallback)
     {
         this.debug = true;
         this.div = div; //The div containing the gifs.
         this.callbackHandler;
+        this.favoritesCallback = favoritesCallback; //Forwards favorites data.
         this.apiKey = "6hk1Q7v4JU4GcK9cDfOghfQEWwWM1DyE";
         
         this.setupHandler();  //Do this so we can use var self = this.
@@ -74,7 +75,7 @@ class ShowGifs
     setupHandler()
     {
         var self = this;
-
+        
         //This function grabs the gifs with the Giphy API and populates the display.
         this.callbackHandler = function(searchVal)
         {
@@ -168,6 +169,7 @@ class ShowGifs
                     copyButton.addClass("btn btn-light");
                     copyButton.attr("value", "copy");
                     copyButton.attr("type", "button");
+                    copyButton.attr("data-url", gifImage.attr("data-animate"));
                     copyDiv.append(copyButton);
 
                     //Add copy div to the overlay.
@@ -181,6 +183,34 @@ class ShowGifs
                     //Add copy tooltip to the copy div.
                     copyDiv.append(copyTooltip);
 
+                    //Create a copy URL div for copy purposes.
+                    var urlDiv = $("<div>");
+                    copyDiv.append(urlDiv);
+
+                    //Need this to copy links.
+                    var copySelf = urlDiv;
+
+                    //Add event listener to the copy button.
+                    copyButton.on("click", function()
+                    {
+                        //Create variable to hold URL to copy.
+                        var dataURL = $(this).attr("data-url");
+                      
+                        //Create text field to copy the value to.
+                        var tempText = $("<input>");
+                        tempText.attr("type", "text");
+                        tempText.attr("id", "temp-text");
+                        tempText.attr("value", dataURL);
+
+                        if(self.debug)console.log("data URL: " + dataURL);
+
+                        //Perform the copy and then remove the temporary text field.
+                        copySelf.append(tempText);
+                        tempText.select();
+                        document.execCommand("copy");
+                        copySelf.empty();
+                    });
+
                     /********************* Favorite *********************/
                    //Create add div.
                     var addDiv = $("<div>");
@@ -191,6 +221,7 @@ class ShowGifs
                     addButton.addClass("btn btn-light");
                     addButton.attr("value", "+");
                     addButton.attr("type", "button");
+                    addButton.attr("data-url", gifImage.attr("data-animate"));
                     addDiv.append(addButton);
 
                     //Add add div to the overlay.
@@ -204,10 +235,16 @@ class ShowGifs
                     //Add add tooltip to the copy div.
                     addDiv.append(addTooltip);
 
+                    //Add event listener to the add button.
+                    addButton.on("click", function()
+                    {
+                        //Create variables to hold data to copy.
+                        var dataURL = $(this).attr("data-url");
+                        if(self.debug)console.log("data URL: " + dataURL);
 
-
-
-
+                        //Send image data to the favorites object.
+                        self.favoritesCallback(animatedURL, stillURL, rating, title);
+                    });
 
                     //Add the gif image to the gif div.
                     gifDiv.append(gifImage);
@@ -218,10 +255,6 @@ class ShowGifs
                     //Add the gif div to the webpage.
                     self.div.prepend(gifDiv);
                 }
-
-
-
-
             });
         }
     }
@@ -232,7 +265,34 @@ class Favorites
 {
     constructor(div)
     {
+        this.debug = true;
         this.div = div; //The div containing the favorite gifs.
+        this.callbackHandler;
+
+        this.setupHandler();  //Do this so we can use var self = this.
+    }
+
+    //Initializes the callback handler.
+    setupHandler()
+    {
+        var self = this;
+
+        //This function takes the data supplied by the ShowGifs object and puts it in favorites.
+        this.callbackHandler = function(animatedURL, stillURL, rating, title)
+        {
+            if(self.debug)
+            {
+                console.log("Favorites animated: " + animatedURL);
+                console.log("Favorites still: " + stillURL);
+                console.log("Favorites rating: " + rating);
+                console.log("Favorites title: " + title);
+            }
+
+
+
+
+
+        }
     }
 }
 
@@ -245,8 +305,9 @@ actors =
     "Leonardo DiCaprio", "Sylvester Stallone", "Jack Nicholson", "Hugo Weaving", "Morgan Freeman"
 ];
 
+//Instantiate the objects that run the application.
 favorites = new Favorites($(".favorites"));
-showGifs = new ShowGifs($(".gifs"));
+showGifs = new ShowGifs($(".gifs"), favorites.callbackHandler);
 categories = new Categories(actors, $(".buttons"), showGifs.callbackHandler);
 
 $(document).ready(function()
