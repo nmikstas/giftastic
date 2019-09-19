@@ -75,18 +75,21 @@ p
 {
     width: 100%;
     min-height: 100px;
-    border: 3px solid #666666;
+    border-bottom: 2px solid #666666;
+    border-top: 2px solid #666666;
+    border-right: 1px solid #666666;
+    border-left: 2px solid #666666;
     box-sizing: border-box;
-    
 }
 
 .favorites-col
 {
     width: 100%;
     min-height: 100px;
-    border-bottom: 3px solid #666666;
-    border-top: 3px solid #666666;
-    border-right: 3px solid #666666;
+    border-bottom: 2px solid #666666;
+    border-top: 2px solid #666666;
+    border-right: 2px solid #666666;
+    border-left: 1px solid #666666;
     box-sizing: border-box;
     text-align: center;
 }
@@ -103,7 +106,8 @@ p
     padding: 2px;
 }
 
-.tooltiptext {
+.tooltiptext
+{
     visibility: hidden;
     width: 120px;
     background-color: black;
@@ -126,16 +130,6 @@ p
     z-index: 10;
 }
 
-.gif-overlay-copy:hover .tooltiptext
-{
-    visibility: visible;
-}
-
-.gif-div:hover .gif-overlay-copy
-{
-    opacity: .7;
-}
-
 .gif-overlay-add
 {
     transition: .5s ease;
@@ -144,16 +138,6 @@ p
     top: 3%;
     right: 3%;
     z-index: 10;
-}
-
-.gif-overlay-add:hover .tooltiptext
-{
-    visibility: visible;
-}
-
-.gif-div:hover .gif-overlay-add
-{
-    opacity: .7;
 }
 
 .gif-overlay-rating
@@ -166,12 +150,16 @@ p
     z-index: 10;
 }
 
-.gif-overlay-rating:hover .tooltiptext
+.gif-overlay-rating:hover .tooltiptext,
+.gif-overlay-add:hover .tooltiptext,
+.gif-overlay-copy:hover .tooltiptext
 {
     visibility: visible;
 }
 
-.gif-div:hover .gif-overlay-rating
+.gif-div:hover .gif-overlay-rating,
+.gif-div:hover .gif-overlay-add,
+.gif-div:hover .gif-overlay-copy
 {
     opacity: .7;
 }
